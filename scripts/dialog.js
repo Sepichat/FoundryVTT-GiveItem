@@ -9,6 +9,8 @@ export class PlayerDialog extends Dialog {
         content: `
         <form>
           <div class="form-group">
+            <label>Quantity:</label>
+            <input type=number min="1" id="quantity" name="quantity" value="1">
             <label>Players:</label>
             <select name="type" id="player">
               ${options.filteredPCList.reduce((acc, currentActor) => {
@@ -31,8 +33,13 @@ export class PlayerDialog extends Dialog {
         default: "yes",
         close: () => {
           if (applyChanges) {
-            const playerId = document.getElementById('player').value
-            callback(playerId);
+            const playerId = document.getElementById('player').value;
+            const quantity = document.getElementById('quantity').value;
+            if (isNaN(quantity)) {
+              console.log("Item quantity invalid");
+              return ui.notifications.error(`Item quantity invalid.`);
+            }
+            callback({playerId, quantity});
           }
         }
       });
