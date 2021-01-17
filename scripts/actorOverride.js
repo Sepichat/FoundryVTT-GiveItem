@@ -23,6 +23,10 @@ export const overrideActorSheet = () => {
   }));
 };
 
+function getItemFromInvoByName(actor, name) {
+  return actor.items.find(t => t.data.name === name);
+}
+
 function giveItem(currentItemId) {
   const currentActor = this.actor;
   const listPC = game.actors.entities.filter(a => a.hasPlayerOwner);
@@ -40,7 +44,15 @@ function giveItem(currentItemId) {
         currentItem.update(updateItem).then(res => {
             const duplicatedItem = duplicate(currentItem);
             duplicatedItem.data.quantity = quantity;
-            actor.createEmbeddedEntity("OwnedItem", duplicatedItem);
+            const existingItem = getItemFromInvoByName(actor, duplicatedItem.name);
+            if (existingItem) {
+              const updateItem = {
+                "data.quantity": existingItem.data.data.quantity + quantity
+              }
+              existingItem.update(updateItem);
+            } else {
+              actor.createEmbeddedEntity("OwnedItem", duplicatedItem);
+            }
             console.log(`Giving item: ${currentItem.id} to actor ${actor.id}`);
             if (currentItem.data.data.quantity === 0) {
                 currentItem.delete();
