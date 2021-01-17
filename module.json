@@ -1,0 +1,13 @@
+{
+    "name": "give-item",
+    "title": "Give item to another player",
+    "description": "A module to allow players to give an item to another player",
+    "author": "Sepichat",
+    "version": "0.1.0",
+    "minimumCoreVersion": "0.7.9",
+    "compatibleCoreVersion": "0.7.9",
+    "system": "dnd5e",
+    "esmodules": [
+        "scripts/main.js"
+    ]
+}
