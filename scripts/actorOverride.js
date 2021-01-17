@@ -1,7 +1,7 @@
 import { PlayerDialog } from "./dialog.js";
 
 function activateListeners(html) {
-  this.originalActivateListeners(html);
+  this.giveItemModuleActivateListeners(html);
   $(`
     <a class="item-control item-give" title="Give item">
       <i class="fas fa-hands-helping"></i>
@@ -17,7 +17,7 @@ function activateListeners(html) {
 export const overrideActorSheet = () => {
   Object.values(CONFIG.Actor.sheetClasses).forEach((type) => Object.values(type).forEach((sheet) => {
     if (sheet.id.includes('dnd5e.ActorSheet5eCharacter')) {
-      sheet.cls.prototype.originalActivateListeners = sheet.cls.prototype.activateListeners;
+      sheet.cls.prototype.giveItemModuleActivateListeners = sheet.cls.prototype.activateListeners;
       sheet.cls.prototype.activateListeners = activateListeners;
     }
   }));
