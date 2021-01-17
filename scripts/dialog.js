@@ -34,12 +34,13 @@ export class PlayerDialog extends Dialog {
         close: () => {
           if (applyChanges) {
             const playerId = document.getElementById('player').value;
-            const quantity = document.getElementById('quantity').value;
+            let quantity = document.getElementById('quantity').value;
             if (isNaN(quantity)) {
               console.log("Item quantity invalid");
               return ui.notifications.error(`Item quantity invalid.`);
             }
-            callback({playerId, Number(quantity)});
+            quantity = Number(quantity);
+            callback({playerId, quantity});
           }
         }
       });
