@@ -24,16 +24,24 @@ export const overrideActorSheet = () => {
 };
 
 function giveItem(currentItemId) {
-  console.log(currentItemId, this, 654654);
   const currentActor = this.actor;
   const listPC = game.actors.entities.filter(a => a.hasPlayerOwner);
   const filteredPCList = listPC.filter(a => a.id !== this.actor.id);
   const d = new PlayerDialog((playerId) => {
       const actor = game.actors.get(playerId);
       const currentItem = currentActor.items.find(item => item.id === currentItemId);
-      actor.createEmbeddedEntity("OwnedItem", currentItem);
-      console.log(`Giving item: ${currentItem.id} to actor ${actor.id}`);
-      currentActor.deleteOwnedItem(currentItemId);
+      const updateItem = {
+        "data.quantity": currentItem.data.data.quantity - 1
+      }
+      currentItem.update(updateItem).then(res => {
+          const duplicatedItem = duplicate(currentItem);
+          duplicatedItem.data.quantity = 1;
+          actor.createEmbeddedEntity("OwnedItem", duplicatedItem);
+          console.log(`Giving item: ${currentItem.id} to actor ${actor.id}`);
+          if (currentItem.data.data.quantity === 0) {
+              currentItem.delete();
+          }
+      });
     },
     {acceptLabel: "Offer Item", filteredPCList}
   );
