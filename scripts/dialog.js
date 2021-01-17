@@ -39,7 +39,7 @@ export class PlayerDialog extends Dialog {
               console.log("Item quantity invalid");
               return ui.notifications.error(`Item quantity invalid.`);
             }
-            callback({playerId, quantity});
+            callback({playerId, Number(quantity)});
           }
         }
       });
