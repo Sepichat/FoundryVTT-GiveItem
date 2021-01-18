@@ -7,7 +7,7 @@ You can install this module in a couple different ways outlined below.
 ### Install through FoundryVTT Add-on Modules Tab (Recommended)
 * Go to the Add-on Modules tab.
 * Click Install Module.
-* Search for GiveItem and click install.
+* Search for `Give item to another player` and click install.
 
 ### Direct URL Install
 * Go to the Add-on Modules tab.
