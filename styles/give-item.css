@@ -1,0 +1,6 @@
+.give-item-dialog.player {
+    flex-basis: 100%;
+}
+.give-item-dialog.currency {
+    flex-basis: 20%;
+}
