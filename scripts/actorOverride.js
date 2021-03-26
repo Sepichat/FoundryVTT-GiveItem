@@ -31,10 +31,6 @@ function addGiveCurrency(html) {
   });
 }
 
-function getItemFromInvoByName(actor, name) {
-  return actor.items.find(t => t.data.name === name);
-}
-
 function giveItem(currentItemId) {
   const currentActor = this.actor;
   const listPC = game.actors.entities.filter(a => a.hasPlayerOwner);
@@ -46,27 +42,12 @@ function giveItem(currentItemId) {
     if (quantity > currentItemQuantity) {
       return ui.notifications.error(`You cannot offer more items than you posses`);
     } else {
-      const updateItem = {
-        "data.quantity": currentItem.data.data.quantity - quantity
-      }
-      currentItem.update(updateItem).then(res => {
-        const duplicatedItem = duplicate(currentItem);
-        duplicatedItem.data.quantity = quantity;
-        const existingItem = getItemFromInvoByName(actor, duplicatedItem.name);
-        if (existingItem) {
-          const updateItem = {
-            "data.quantity": existingItem.data.data.quantity + quantity
-          }
-          existingItem.update(updateItem);
-        } else {
-          actor.createEmbeddedEntity("OwnedItem", duplicatedItem);
-        }
-        console.log(`Giving item: ${currentItem.id} to actor ${actor.id}`);
-        if (currentItem.data.data.quantity === 0) {
-          currentItem.delete();
-        }
-      }
-      );
+      game.socket.emit('module.give-item', {
+        data: {currentItem, quantity},
+        actorId: actor.id,
+        currentActorId: currentActor.id,
+        type: "request"
+      });
     }
   },
     {acceptLabel: "Offer Item", filteredPCList}
@@ -81,27 +62,14 @@ function giveCurrency() {
   const d = new PlayerDialog(({playerId, pp, gp, ep, sp, cp}) => {
     const actor = game.actors.get(playerId);
     const currentCurrency = currentActor.data.data.currency;
-    const currentTargetCurrency = actor.data.data.currency;
     if (pp > currentCurrency.pp || gp > currentCurrency.gp || ep > currentCurrency.ep || sp > currentCurrency.sp || cp > currentCurrency.cp) {
       return ui.notifications.error(`You cannot offer more currency than you posses`);
     } else {
-      const updateGold = {
-        "data.currency.pp": currentCurrency.pp - pp,
-        "data.currency.gp": currentCurrency.gp - gp,
-        "data.currency.ep": currentCurrency.ep - ep,
-        "data.currency.sp": currentCurrency.sp - sp,
-        "data.currency.cp": currentCurrency.cp - cp,
-      };
-      currentActor.update(updateGold).then(res => {
-        const updateTargetGold = {
-          "data.currency.pp": currentTargetCurrency.pp + pp,
-          "data.currency.gp": currentTargetCurrency.gp + gp,
-          "data.currency.ep": currentTargetCurrency.ep + ep,
-          "data.currency.sp": currentTargetCurrency.sp + sp,
-          "data.currency.cp": currentTargetCurrency.cp + cp,
-        };
-        console.log(`Giving currency: pp:${pp}, gp:${gp}, ep:${ep}, sp:${sp}, cp:${cp}, to actor ${actor.id}`);
-        actor.update(updateTargetGold);
+      game.socket.emit('module.give-item', {
+        data: {quantity: {pp, gp, ep, sp, cp}},
+        actorId: actor.id,
+        currentActorId: currentActor.id,
+        type: "request"
       });
     }
   },
