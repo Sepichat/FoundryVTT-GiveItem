@@ -33,8 +33,12 @@ function addGiveCurrency(html) {
 
 function giveItem(currentItemId) {
   const currentActor = this.actor;
-  const listPC = game.actors.entities.filter(a => a.hasPlayerOwner);
-  const filteredPCList = listPC.filter(a => a.id !== this.actor.id);
+  const filteredPCList = [];
+  game.users.players.forEach(player => {
+    if (!!player.character && game.user.character.id !== player.character.id) {
+      filteredPCList.push(player.character);
+    }
+  });
   const d = new PlayerDialog(({playerId, quantity}) => {
     const actor = game.actors.get(playerId);
     const currentItem = currentActor.items.find(item => item.id === currentItemId);
@@ -57,8 +61,12 @@ function giveItem(currentItemId) {
 
 function giveCurrency() {
   const currentActor = this.actor;
-  const listPC = game.actors.entities.filter(a => a.hasPlayerOwner);
-  const filteredPCList = listPC.filter(a => a.id !== this.actor.id);
+  const filteredPCList = [];
+  game.users.players.forEach(player => {
+    if (!!player.character && game.user.character.id !== player.character.id) {
+      filteredPCList.push(player.character);
+    }
+  });
   const d = new PlayerDialog(({playerId, pp, gp, ep, sp, cp}) => {
     const actor = game.actors.get(playerId);
     const currentCurrency = currentActor.data.data.currency;
