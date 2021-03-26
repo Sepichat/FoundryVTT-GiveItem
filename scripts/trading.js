@@ -102,7 +102,7 @@ function tradeConfirmed(tradeData) {
     game.socket.emit('module.give-item', {
         data: tradeData,
         actorId: tradeData.currentActor.id,
-        currentActorId: actor.id,
+        currentActorId: tradeData.actor.id,
         type: "accepted"
     });
 }
@@ -111,7 +111,7 @@ function tradeDenied(tradeData) {
     game.socket.emit('module.give-item', {
         data: tradeData,
         actorId: tradeData.currentActor.id,
-        currentActorId: actor.id,
+        currentActorId: tradeData.actor.id,
         type: "denied"
     });
 }
