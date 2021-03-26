@@ -11,7 +11,7 @@ function addGiveItemButton(html) {
     <a class="item-control item-give" title="Give item">
       <i class="fas fa-hands-helping"></i>
     </a>
-  `).insertAfter(html.find(".item-control.item-delete"));
+  `).insertAfter(html.find(".inventory .item-control.item-delete"));
   html.find(".item-control.item-give").on("click", (e) => {
     e.preventDefault();
     const currentItemId = e.currentTarget.closest(".item").dataset.itemId;
