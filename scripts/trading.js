@@ -29,7 +29,7 @@ export function completeTrade(tradeData) {
 }
 
 export function denyTrade(tradeData) {
-    ui.notifications.notify(`${tradeData.actor.name} rejected your trade request.`);
+    ui.notifications.notify(`${tradeData.currentActor.name} rejected your trade request.`);
 }
 
 function giveItem({currentItem, quantity, actor}) {
@@ -102,6 +102,7 @@ function tradeConfirmed(tradeData) {
     game.socket.emit('module.give-item', {
         data: tradeData,
         actorId: tradeData.currentActor.id,
+        currentActorId: actor.id,
         type: "accepted"
     });
 }
@@ -110,6 +111,7 @@ function tradeDenied(tradeData) {
     game.socket.emit('module.give-item', {
         data: tradeData,
         actorId: tradeData.currentActor.id,
+        currentActorId: actor.id,
         type: "denied"
     });
 }
