@@ -1,25 +1,32 @@
 import { PlayerDialog } from "./dialog.js";
 
-function activateListeners(html) {
-  this.giveItemModuleActivateListeners(html);
-  addGiveItemButton.bind(this)(html);
-  addGiveCurrency.bind(this)(html);
-}
 
-function addGiveItemButton(html) {
+export function addGiveItemButtonDnD5(html, actor) {
   $(`
     <a class="item-control item-give" title="Give item">
       <i class="fas fa-hands-helping"></i>
     </a>
   `).insertAfter(html.find(".inventory .item-control.item-delete"));
-  html.find(".item-control.item-give").on("click", (e) => {
-    e.preventDefault();
-    const currentItemId = e.currentTarget.closest(".item").dataset.itemId;
-    giveItem.bind(this)(currentItemId);
-  });
+  html.find(".item-control.item-give").on("click", giveItemHandler.bind(actor));
 }
 
-function addGiveCurrency(html) {
+export function addGiveItemButtonTidy(html, actor) {
+  $(`
+    <a class="item-control item-give" title="Give item">
+      <i class="fas fa-hands-helping"></i>
+      <span class="control-label">Give Item</span>
+    </a>
+  `).insertAfter(html.find(".inventory .item-control.item-edit"));
+  html.find(".item-control.item-give").on("click", giveItemHandler.bind(actor));
+}
+
+function giveItemHandler(e) {
+  e.preventDefault();
+  const currentItemId = e.currentTarget.closest(".item").dataset.itemId;
+  giveItem.bind(this)(currentItemId);
+}
+
+export function addGiveCurrency(html, actor) {
   $(`
     <a class="currency-control currency-give" title="Give currency">
       <i class="fas fa-hands-helping"></i>
@@ -27,12 +34,12 @@ function addGiveCurrency(html) {
   `).insertAfter(html.find(".currency-convert.rollable"));
   html.find(".currency-control.currency-give").on("click", (e) => {
     e.preventDefault();
-    giveCurrency.bind(this)();
+    giveCurrency.bind(actor)();
   });
 }
 
 function giveItem(currentItemId) {
-  const currentActor = this.actor;
+  const currentActor = this;
   const filteredPCList = [];
   game.users.players.forEach(player => {
     if (!!player.character && game.user.character.id !== player.character.id) {
@@ -60,7 +67,7 @@ function giveItem(currentItemId) {
 }
 
 function giveCurrency() {
-  const currentActor = this.actor;
+  const currentActor = this;
   const filteredPCList = [];
   game.users.players.forEach(player => {
     if (!!player.character && game.user.character.id !== player.character.id) {
@@ -86,11 +93,3 @@ function giveCurrency() {
   d.render(true);
 }
 
-export const overrideActorSheet = () => {
-  Object.values(CONFIG.Actor.sheetClasses).forEach((type) => Object.values(type).forEach((sheet) => {
-    if (sheet.id.includes('dnd5e.ActorSheet5eCharacter')) {
-      sheet.cls.prototype.giveItemModuleActivateListeners = sheet.cls.prototype.activateListeners;
-      sheet.cls.prototype.activateListeners = activateListeners;
-    }
-  }));
-};

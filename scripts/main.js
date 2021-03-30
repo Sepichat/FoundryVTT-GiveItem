@@ -1,8 +1,14 @@
-import { overrideActorSheet } from './actorOverride.js';
+import { addGiveItemButtonDnD5, addGiveItemButtonTidy, addGiveCurrency } from './actorOverride.js';
 import { completeTrade, denyTrade, receiveTrade } from './trading.js';
 
-Hooks.on('ready', () => {
-  overrideActorSheet();
+Hooks.on('renderActorSheet5eCharacter', (sheet, html, character) => {
+  let sheetClasses = sheet.options.classes;
+  if (sheetClasses[0] === "tidy5e") {
+    addGiveItemButtonTidy(html, sheet.actor);
+  } else {
+    addGiveItemButtonDnD5(html, sheet.actor);
+  }
+  addGiveCurrency(html, sheet.actor);
 });
 
 Hooks.on('init', function () {
