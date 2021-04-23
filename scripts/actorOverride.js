@@ -6,7 +6,7 @@ export function addGiveItemButtonDnD5(html, actor) {
     <a class="item-control item-give" title="Give item">
       <i class="fas fa-hands-helping"></i>
     </a>
-  `).insertAfter(html.find(".inventory .item-control.item-delete"));
+  `).insertAfter(html.find(".inventory .item-control.item-edit"));
   html.find(".item-control.item-give").on("click", giveItemHandler.bind(actor));
 }
 
@@ -42,14 +42,19 @@ function giveItem(currentItemId) {
   const currentActor = this;
   const filteredPCList = [];
   game.users.players.forEach(player => {
-    if (!!player.character && game.user.character.id !== player.character.id) {
+    if (!!player.character && game.user.character?.id !== player.character.id) {
       filteredPCList.push(player.character);
     }
   });
   const d = new PlayerDialog(({playerId, quantity}) => {
     const actor = game.actors.get(playerId);
     const currentItem = currentActor.items.find(item => item.id === currentItemId);
-    const currentItemQuantity = currentItem.data.data.quantity;
+    let currentItemQuantity;
+    if (isNaN(currentItem.data.data.quantity)) {
+      currentItemQuantity = currentItem.data.data.quantity.value
+    } else {
+      currentItemQuantity = currentItem.data.data.quantity
+    }
     if (quantity > currentItemQuantity) {
       return ui.notifications.error(`You cannot offer more items than you posses`);
     } else {

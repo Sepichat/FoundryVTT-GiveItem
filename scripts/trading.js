@@ -34,36 +34,58 @@ export function denyTrade(tradeData) {
 
 function giveItem({currentItem, quantity, actor}) {
     currentItem = actor.items.get(currentItem._id);
-    const updateItem = {
-        "data.quantity": currentItem.data.data.quantity - quantity
+    let updatedQuantity, updateItem;
+    if (isNaN(currentItem.data.data.quantity)) {
+        updatedQuantity = currentItem.data.data.quantity.value - quantity;
+        updateItem = {
+            "data.quantity.value": updatedQuantity
+        }
+    } else {
+        updatedQuantity = currentItem.data.data.quantity - quantity;
+        updateItem = {
+            "data.quantity": updatedQuantity
+        }
     }
     currentItem.update(updateItem).then(res => {
-        if (currentItem.data.data.quantity === 0) {
+        if ((isNaN(currentItem.data.data.quantity) && currentItem.data.data.quantity.value === 0) ||
+            currentItem.data.data.quantity === 0) {
             currentItem.delete();
         }
     });
 }
 
-
 function giveCurrency({quantity, actor}) {
     const currentCurrency = actor.data.data.currency;
     const updateTargetGold = {
-        "data.currency.pp": currentCurrency.pp- quantity.pp,
-        "data.currency.gp": currentCurrency.gp- quantity.gp,
-        "data.currency.ep": currentCurrency.ep- quantity.ep,
-        "data.currency.sp": currentCurrency.sp- quantity.sp,
-        "data.currency.cp": currentCurrency.cp- quantity.cp,
+        "data.currency.pp": currentCurrency.pp - quantity.pp,
+        "data.currency.gp": currentCurrency.gp - quantity.gp,
+        "data.currency.ep": currentCurrency.ep - quantity.ep,
+        "data.currency.sp": currentCurrency.sp - quantity.sp,
+        "data.currency.cp": currentCurrency.cp - quantity.cp,
     };
     actor.update(updateTargetGold);
 }
 
 function receiveItem({currentItem, quantity, actor}) {
     const duplicatedItem = duplicate(currentItem);
-    duplicatedItem.data.quantity = quantity;
+    if (isNaN(duplicatedItem.data.quantity)) {
+        duplicatedItem.data.quantity.value = quantity;
+    } else {
+        duplicatedItem.data.quantity = quantity;
+    }
     const existingItem = getItemFromInvoByName(actor, duplicatedItem.name);
     if (existingItem) {
-        const updateItem = {
-        "data.quantity": existingItem.data.data.quantity + quantity
+        let updatedQuantity, updateItem;
+        if (isNaN(duplicatedItem.data.quantity)) {
+            updatedQuantity = existingItem.data.data.quantity.value + quantity;
+            updateItem = {
+                "data.quantity.value": updatedQuantity
+            };
+        } else {
+            updatedQuantity = existingItem.data.data.quantity + quantity;
+            updateItem = {
+                "data.quantity": updatedQuantity
+            };
         }
         existingItem.update(updateItem);
     } else {

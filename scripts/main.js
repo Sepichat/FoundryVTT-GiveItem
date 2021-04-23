@@ -11,6 +11,12 @@ Hooks.on('renderActorSheet5eCharacter', (sheet, html, character) => {
   addGiveCurrency(html, sheet.actor);
 });
 
+
+Hooks.on('renderActorSheetPF2eCreature', (sheet, html, character) => {
+  addGiveItemButtonDnD5(html, sheet.actor);
+  addGiveCurrency(html, sheet.actor);
+});
+
 Hooks.on('init', function () {
   game.settings.register('give-item', 'give-item', {
     name: 'Activate giving item',
