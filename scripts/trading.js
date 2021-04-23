@@ -25,7 +25,7 @@ export function completeTrade(tradeData) {
     } else {
         giveCurrency(tradeData);
     }
-    ui.notifications.notify(`${tradeData.actor.name} accepted your trade request.`);
+    ui.notifications.notify(`${tradeData.currentActor.name} accepted your trade request.`);
 }
 
 export function denyTrade(tradeData) {
