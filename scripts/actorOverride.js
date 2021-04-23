@@ -1,7 +1,7 @@
 import { PlayerDialog } from "./dialog.js";
 
 
-export function addGiveItemButtonDnD5(html, actor) {
+export function addGiveItemButton(html, actor) {
   $(`
     <a class="item-control item-give" title="Give item">
       <i class="fas fa-hands-helping"></i>
@@ -35,6 +35,27 @@ export function addGiveCurrency(html, actor) {
   html.find(".currency-control.currency-give").on("click", (e) => {
     e.preventDefault();
     giveCurrency.bind(actor)();
+  });
+}
+
+export function addGiveCurrencyPF1E(html, actor) {
+  $(`
+    <a class="currency-control currency-give main" title="Give currency">
+      <i class="fas fa-hands-helping"></i>
+    </a>
+  `).insertAfter(html.find("ol.currency:nth-of-type(1) h3"));
+  html.find(".currency-control.currency-give.main").on("click", (e) => {
+    e.preventDefault();
+    giveMainCurrencyPF1E.bind(actor)();
+  });
+  $(`
+    <a class="currency-control currency-give alt" title="Give currency">
+      <i class="fas fa-hands-helping"></i>
+    </a>
+  `).insertAfter(html.find("ol.currency:nth-of-type(2) h3"));
+  html.find(".currency-control.currency-give.alt").on("click", (e) => {
+    e.preventDefault();
+    giveAltCurrencyPF1E.bind(actor)();
   });
 }
 
@@ -75,7 +96,7 @@ function giveCurrency() {
   const currentActor = this;
   const filteredPCList = [];
   game.users.players.forEach(player => {
-    if (!!player.character && game.user.character.id !== player.character.id) {
+    if (!!player.character && game.user.character?.id !== player.character.id) {
       filteredPCList.push(player.character);
     }
   });
@@ -98,3 +119,58 @@ function giveCurrency() {
   d.render(true);
 }
 
+
+function giveMainCurrencyPF1E() {
+  const currentActor = this;
+  const filteredPCList = [];
+  game.users.players.forEach(player => {
+    if (!!player.character && game.user.character?.id !== player.character.id) {
+      filteredPCList.push(player.character);
+    }
+  });
+  const d = new PlayerDialog(({playerId, pp, gp, sp, cp}) => {
+    const actor = game.actors.get(playerId);
+    const currentCurrency = currentActor.data.data.currency;
+    if (pp > currentCurrency.pp || gp > currentCurrency.gp || sp > currentCurrency.sp || cp > currentCurrency.cp) {
+      return ui.notifications.error(`You cannot offer more currency than you posses`);
+    } else {
+      game.socket.emit('module.give-item', {
+        data: {quantity: {pp, gp, sp, cp}},
+        actorId: actor.id,
+        currentActorId: currentActor.id,
+        type: "request"
+      });
+    }
+  },
+    {acceptLabel: "Offer Currency", filteredPCList, currency: true}
+  );
+  d.render(true);
+}
+
+
+function giveAltCurrencyPF1E() {
+  const currentActor = this;
+  const filteredPCList = [];
+  game.users.players.forEach(player => {
+    if (!!player.character && game.user.character?.id !== player.character.id) {
+      filteredPCList.push(player.character);
+    }
+  });
+  const d = new PlayerDialog(({playerId, pp, gp, sp, cp}) => {
+    const actor = game.actors.get(playerId);
+    const currentCurrency = currentActor.data.data.altCurrency;
+    if (pp > currentCurrency.pp || gp > currentCurrency.gp || sp > currentCurrency.sp || cp > currentCurrency.cp) {
+      return ui.notifications.error(`You cannot offer more currency than you posses`);
+    } else {
+      game.socket.emit('module.give-item', {
+        data: {quantity: {pp, gp, sp, cp}, alt: true},
+        actorId: actor.id,
+        currentActorId: currentActor.id,
+        type: "request"
+      });
+    }
+  },
+    {acceptLabel: "Offer Currency", filteredPCList, currency: true}
+  );
+  d.render(true);
+}
