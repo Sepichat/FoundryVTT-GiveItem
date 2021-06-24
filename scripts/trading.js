@@ -89,7 +89,7 @@ function receiveItem({currentItem, quantity, actor}) {
         }
         existingItem.update(updateItem);
     } else {
-        actor.createEmbeddedEntity("OwnedItem", duplicatedItem);
+        Item.create(duplicatedItem, {parent: actor});
     }
     console.log(`Giving item: ${currentItem.id} to actor ${actor.id}`);
 }
