@@ -77,7 +77,7 @@ function giveItem(currentItemId) {
       currentItemQuantity = currentItem.data.data.quantity
     }
     if (quantity > currentItemQuantity) {
-      return ui.notifications.error(`You cannot offer more items than you posses`);
+      return ui.notifications.error(`You cannot offer more items than you have`);
     } else {
       game.socket.emit('module.give-item', {
         data: {currentItem, quantity},
@@ -104,7 +104,7 @@ function giveCurrency() {
     const actor = game.actors.get(playerId);
     const currentCurrency = currentActor.data.data.currency;
     if (pp > currentCurrency.pp || gp > currentCurrency.gp || ep > currentCurrency.ep || sp > currentCurrency.sp || cp > currentCurrency.cp) {
-      return ui.notifications.error(`You cannot offer more currency than you posses`);
+      return ui.notifications.error(`You cannot offer more currency than you have`);
     } else {
       game.socket.emit('module.give-item', {
         data: {quantity: {pp, gp, ep, sp, cp}},
@@ -132,7 +132,7 @@ function giveMainCurrencyPF1E() {
     const actor = game.actors.get(playerId);
     const currentCurrency = currentActor.data.data.currency;
     if (pp > currentCurrency.pp || gp > currentCurrency.gp || sp > currentCurrency.sp || cp > currentCurrency.cp) {
-      return ui.notifications.error(`You cannot offer more currency than you posses`);
+      return ui.notifications.error(`You cannot offer more currency than you have`);
     } else {
       game.socket.emit('module.give-item', {
         data: {quantity: {pp, gp, sp, cp}},
@@ -160,7 +160,7 @@ function giveAltCurrencyPF1E() {
     const actor = game.actors.get(playerId);
     const currentCurrency = currentActor.data.data.altCurrency;
     if (pp > currentCurrency.pp || gp > currentCurrency.gp || sp > currentCurrency.sp || cp > currentCurrency.cp) {
-      return ui.notifications.error(`You cannot offer more currency than you posses`);
+      return ui.notifications.error(`You cannot offer more currency than you have`);
     } else {
       game.socket.emit('module.give-item', {
         data: {quantity: {pp, gp, sp, cp}, alt: true},
