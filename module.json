@@ -3,11 +3,11 @@
     "title": "Give item to another player",
     "description": "A module to allow players to give an item to another player",
     "author": "Sepichat",
-    "version": "1.7.2",
+    "version": "1.9.0",
     "url": "https://github.com/Sepichat/FoundryVTT-GiveItem",
-    "minimumCoreVersion": "0.7.9",
-    "compatibleCoreVersion": "0.7.9",
-    "system": ["dnd5e", "pf2e"],
+    "minimumCoreVersion": "0.8.0",
+    "compatibleCoreVersion": "0.8.8",
+    "system": ["dnd5e", "pf2e", "pf1"],
     "socket": true,
     "esmodules": [
         "scripts/main.js"
