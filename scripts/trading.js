@@ -54,15 +54,33 @@ function giveItem({currentItem, quantity, actor}) {
     });
 }
 
-function giveCurrency({quantity, actor}) {
-    const currentCurrency = actor.data.data.currency;
-    const updateTargetGold = {
-        "data.currency.pp": currentCurrency.pp - quantity.pp,
-        "data.currency.gp": currentCurrency.gp - quantity.gp,
-        "data.currency.ep": currentCurrency.ep - quantity.ep,
-        "data.currency.sp": currentCurrency.sp - quantity.sp,
-        "data.currency.cp": currentCurrency.cp - quantity.cp,
-    };
+function giveCurrency({quantity, actor, alt}) {
+    let currentCurrency = actor.data.data.currency;
+    let updateTargetGold = {};
+    if (alt) {
+        currentCurrency = actor.data.data.altCurrency;
+        updateTargetGold = {
+            "data.altCurrency.pp": currentCurrency.pp - quantity.pp,
+            "data.altCurrency.gp": currentCurrency.gp - quantity.gp,
+            "data.altCurrency.sp": currentCurrency.sp - quantity.sp,
+            "data.altCurrency.cp": currentCurrency.cp - quantity.cp,
+        };
+    } else {
+        updateTargetGold = {
+            "data.currency.pp": currentCurrency.pp - quantity.pp,
+            "data.currency.gp": currentCurrency.gp - quantity.gp,
+            "data.currency.sp": currentCurrency.sp - quantity.sp,
+            "data.currency.cp": currentCurrency.cp - quantity.cp,
+        };
+    }
+    
+    if (quantity.ep) {
+        if (alt) {   
+            updateTargetGold["data.altCurrency.ep"] = currentCurrency.ep - quantity.ep;
+        } else {
+            updateTargetGold["data.currency.ep"] = currentCurrency.ep - quantity.ep;
+        }
+    }
     actor.update(updateTargetGold);
 }
 
@@ -94,24 +112,37 @@ function receiveItem({currentItem, quantity, actor}) {
     console.log(`Giving item: ${currentItem.id} to actor ${actor.id}`);
 }
 
-function receiveCurrency({actor, quantity}) {
-    const currentCurrency = actor.data.data.currency;
-    const updateGold = {
-        "data.currency.pp": currentCurrency.pp + quantity.pp,
-        "data.currency.gp": currentCurrency.gp + quantity.gp,
-        "data.currency.ep": currentCurrency.ep + quantity.ep,
-        "data.currency.sp": currentCurrency.sp + quantity.sp,
-        "data.currency.cp": currentCurrency.cp + quantity.cp,
-    };
+function receiveCurrency({actor, quantity, alt}) {
+    let currentCurrency = actor.data.data.currency;
+    let updateGold = {};
+    if (alt) {
+        currentCurrency = actor.data.data.altCurrency;
+        updateGold = {
+            "data.altCurrency.pp": currentCurrency.pp + quantity.pp,
+            "data.altCurrency.gp": currentCurrency.gp + quantity.gp,
+            "data.altCurrency.sp": currentCurrency.sp + quantity.sp,
+            "data.altCurrency.cp": currentCurrency.cp + quantity.cp,
+        };
+    } else {
+        updateGold = {
+            "data.currency.pp": currentCurrency.pp + quantity.pp,
+            "data.currency.gp": currentCurrency.gp + quantity.gp,
+            "data.currency.sp": currentCurrency.sp + quantity.sp,
+            "data.currency.cp": currentCurrency.cp + quantity.cp,
+        };
+    }
+    if (quantity.ep) {
+        updateGold["data.currency.ep"] = currentCurrency.ep + quantity.ep;
+    }
     actor.update(updateGold);
-    console.log(`Giving currency: pp:${quantity.pp}, gp:${quantity.gp}, ep:${quantity.ep}, sp:${quantity.sp}, cp:${quantity.cp}, to actor ${actor.id}`);
+    console.log(`Giving ${alt ? "Weightless currency: " : ""} currency: pp:${quantity.pp}, gp:${quantity.gp}, ep:${quantity.ep}, sp:${quantity.sp}, cp:${quantity.cp}, to actor ${actor.id}`);
 }
 
 function offer(data) {
     if (!!data.currentItem) {
         return `${data.quantity} ${data.currentItem.name}`;
     }
-    return `${data.quantity.pp} pp, ${data.quantity.gp} gp, ${data.quantity.ep} ep, ${data.quantity.sp} sp, ${data.quantity.cp} cp`;
+    return `${data.alt ? "Weightless currency: ": ""} ${data.quantity.pp} pp, ${data.quantity.gp} gp, ${data.quantity.ep ? `${data.quantity.ep}  ep, ` : ""}${data.quantity.sp} sp, ${data.quantity.cp} cp`;
 }
 
 function tradeConfirmed(tradeData) {

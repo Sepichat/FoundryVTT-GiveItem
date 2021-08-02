@@ -35,10 +35,13 @@ export class PlayerDialog extends Dialog {
             <label>Gold:</label>
             <input type=number id="gp" name="gp" value="">
           </div>
-          <div class="give-item-dialog currency">
-            <label>Electrum:</label>
-            <input type=number id="ep" name="ep" value="">
-          </div>
+          ${game.system.id === "dnd5e" ? 
+            `<div class="give-item-dialog currency">
+              <label>Electrum:</label>
+              <input type=number id="ep" name="ep" value="">
+            </div>` : ''
+          }
+          
           <div class="give-item-dialog currency">
             <label>Silver:</label>
             <input type=number id="sp" name="sp" value="">
@@ -71,10 +74,10 @@ export class PlayerDialog extends Dialog {
               const playerId = document.getElementById('player').value;
               let pp = document.getElementById('pp').value;
               let gp = document.getElementById('gp').value;
-              let ep = document.getElementById('ep').value;
+              let ep = document.getElementById('ep')?.value;
               let sp = document.getElementById('sp').value;
               let cp = document.getElementById('cp').value;
-              if (isNaN(pp) || isNaN(gp) || isNaN(ep) || isNaN(sp) || isNaN(cp)) {
+              if (isNaN(pp) || isNaN(gp) || (ep !== undefined && isNaN(ep)) || isNaN(sp) || isNaN(cp)) {
                 console.log("Currency quantity invalid");
                 return ui.notifications.error(`Currency quantity invalid.`);
               }
