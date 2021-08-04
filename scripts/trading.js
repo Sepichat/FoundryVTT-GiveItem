@@ -55,33 +55,52 @@ function giveItem({currentItem, quantity, actor}) {
 }
 
 function giveCurrency({quantity, actor, alt}) {
-    let currentCurrency = actor.data.data.currency;
-    let updateTargetGold = {};
-    if (alt) {
-        currentCurrency = actor.data.data.altCurrency;
-        updateTargetGold = {
-            "data.altCurrency.pp": currentCurrency.pp - quantity.pp,
-            "data.altCurrency.gp": currentCurrency.gp - quantity.gp,
-            "data.altCurrency.sp": currentCurrency.sp - quantity.sp,
-            "data.altCurrency.cp": currentCurrency.cp - quantity.cp,
+    if (game.system.id === "wfrp4e") {
+        const currentCurrency = actor.data.items.filter(item => item.type === "money");
+        const currentGC = currentCurrency.find(currency => currency.data.name === "Gold Crown");
+        const currentSS = currentCurrency.find(currency => currency.data.name === "Silver Shilling");
+        const currentBP = currentCurrency.find(currency => currency.data.name === "Brass Penny");
+        const updateGC = {
+            "data.quantity.value": currentGC.data.data.quantity.value - quantity.gc
         };
+        currentGC.update(updateGC);
+        const updateSS = {
+            "data.quantity.value": currentSS.data.data.quantity.value - quantity.ss
+        };
+        currentSS.update(updateSS);
+        const updateBP = {
+            "data.quantity.value": currentBP.data.data.quantity.value - quantity.bp
+        };
+        currentBP.update(updateBP);
     } else {
-        updateTargetGold = {
-            "data.currency.pp": currentCurrency.pp - quantity.pp,
-            "data.currency.gp": currentCurrency.gp - quantity.gp,
-            "data.currency.sp": currentCurrency.sp - quantity.sp,
-            "data.currency.cp": currentCurrency.cp - quantity.cp,
-        };
-    }
-    
-    if (quantity.ep) {
-        if (alt) {   
-            updateTargetGold["data.altCurrency.ep"] = currentCurrency.ep - quantity.ep;
+        let currentCurrency = actor.data.data.currency;
+        let updateTargetGold = {};
+        if (alt) {
+            currentCurrency = actor.data.data.altCurrency;
+            updateTargetGold = {
+                "data.altCurrency.pp": currentCurrency.pp - quantity.pp,
+                "data.altCurrency.gp": currentCurrency.gp - quantity.gp,
+                "data.altCurrency.sp": currentCurrency.sp - quantity.sp,
+                "data.altCurrency.cp": currentCurrency.cp - quantity.cp,
+            };
         } else {
-            updateTargetGold["data.currency.ep"] = currentCurrency.ep - quantity.ep;
+            updateTargetGold = {
+                "data.currency.pp": currentCurrency.pp - quantity.pp,
+                "data.currency.gp": currentCurrency.gp - quantity.gp,
+                "data.currency.sp": currentCurrency.sp - quantity.sp,
+                "data.currency.cp": currentCurrency.cp - quantity.cp,
+            };
         }
+
+        if (quantity.ep) {
+            if (alt) {
+                updateTargetGold["data.altCurrency.ep"] = currentCurrency.ep - quantity.ep;
+            } else {
+                updateTargetGold["data.currency.ep"] = currentCurrency.ep - quantity.ep;
+            }
+        }
+        actor.update(updateTargetGold);
     }
-    actor.update(updateTargetGold);
 }
 
 function receiveItem({currentItem, quantity, actor}) {
@@ -113,34 +132,57 @@ function receiveItem({currentItem, quantity, actor}) {
 }
 
 function receiveCurrency({actor, quantity, alt}) {
-    let currentCurrency = actor.data.data.currency;
-    let updateGold = {};
-    if (alt) {
-        currentCurrency = actor.data.data.altCurrency;
-        updateGold = {
-            "data.altCurrency.pp": currentCurrency.pp + quantity.pp,
-            "data.altCurrency.gp": currentCurrency.gp + quantity.gp,
-            "data.altCurrency.sp": currentCurrency.sp + quantity.sp,
-            "data.altCurrency.cp": currentCurrency.cp + quantity.cp,
+    if (game.system.id === "wfrp4e") {
+        const currentCurrency = actor.data.items.filter(item => item.type === "money");
+        const currentGC = currentCurrency.find(currency => currency.data.name === "Gold Crown");
+        const currentSS = currentCurrency.find(currency => currency.data.name === "Silver Shilling");
+        const currentBP = currentCurrency.find(currency => currency.data.name === "Brass Penny");
+        const updateGC = {
+            "data.quantity.value": currentGC.data.data.quantity.value + quantity.gc
         };
+        currentGC.update(updateGC);
+        const updateSS = {
+            "data.quantity.value": currentSS.data.data.quantity.value + quantity.ss
+        };
+        currentSS.update(updateSS);
+        const updateBP = {
+            "data.quantity.value": currentBP.data.data.quantity.value + quantity.bp
+        };
+        currentBP.update(updateBP);
+        console.log(`Giving currency: GC:${quantity.gc}, SS:${quantity.ss}, BP:${quantity.bp}, to actor ${actor.id}`);
     } else {
-        updateGold = {
-            "data.currency.pp": currentCurrency.pp + quantity.pp,
-            "data.currency.gp": currentCurrency.gp + quantity.gp,
-            "data.currency.sp": currentCurrency.sp + quantity.sp,
-            "data.currency.cp": currentCurrency.cp + quantity.cp,
-        };
+        let currentCurrency = actor.data.data.currency;
+        let updateGold = {};
+        if (alt) {
+            currentCurrency = actor.data.data.altCurrency;
+            updateGold = {
+                "data.altCurrency.pp": currentCurrency.pp + quantity.pp,
+                "data.altCurrency.gp": currentCurrency.gp + quantity.gp,
+                "data.altCurrency.sp": currentCurrency.sp + quantity.sp,
+                "data.altCurrency.cp": currentCurrency.cp + quantity.cp,
+            };
+        } else {
+            updateGold = {
+                "data.currency.pp": currentCurrency.pp + quantity.pp,
+                "data.currency.gp": currentCurrency.gp + quantity.gp,
+                "data.currency.sp": currentCurrency.sp + quantity.sp,
+                "data.currency.cp": currentCurrency.cp + quantity.cp,
+            };
+        }
+        if (quantity.ep) {
+            updateGold["data.currency.ep"] = currentCurrency.ep + quantity.ep;
+        }
+        console.log(`Giving ${alt ? "Weightless currency: " : ""} currency: pp:${quantity.pp}, gp:${quantity.gp}, ep:${quantity.ep}, sp:${quantity.sp}, cp:${quantity.cp}, to actor ${actor.id}`);
+        actor.update(updateGold);
     }
-    if (quantity.ep) {
-        updateGold["data.currency.ep"] = currentCurrency.ep + quantity.ep;
-    }
-    actor.update(updateGold);
-    console.log(`Giving ${alt ? "Weightless currency: " : ""} currency: pp:${quantity.pp}, gp:${quantity.gp}, ep:${quantity.ep}, sp:${quantity.sp}, cp:${quantity.cp}, to actor ${actor.id}`);
 }
 
 function offer(data) {
     if (!!data.currentItem) {
         return `${data.quantity} ${data.currentItem.name}`;
+    }
+    if (game.system.id === "wfrp4e") {
+        return `${data.quantity.gc} GC, ${data.quantity.ss} SS, ${data.quantity.bp} BP`;
     }
     return `${data.alt ? "Weightless currency: ": ""} ${data.quantity.pp} pp, ${data.quantity.gp} gp, ${data.quantity.ep ? `${data.quantity.ep}  ep, ` : ""}${data.quantity.sp} sp, ${data.quantity.cp} cp`;
 }
