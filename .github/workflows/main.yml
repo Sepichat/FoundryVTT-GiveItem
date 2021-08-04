@@ -25,7 +25,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: Zip Files
         working-directory: ./
-        run: zip -r ./module.zip ./scripts/* ./module.json ./LICENSE
+        run: zip -r ./module.zip ./scripts/* ./styles/* ./module.json ./LICENSE
 
       - name: Get Version
         shell: bash
