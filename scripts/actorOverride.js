@@ -1,12 +1,11 @@
 import { PlayerDialog } from "./dialog.js";
 
-
 export function addGiveItemButton(html, actor) {
   $(`
     <a class="item-control item-give" title="Give item">
       <i class="fas fa-hands-helping"></i>
     </a>
-  `).insertAfter(html.find(".inventory .item-control.item-edit"));
+  `).insertAfter(html.find(".inventory ol:not(.currency-list)  .item-control.item-edit"));
   html.find(".item-control.item-give").on("click", giveItemHandler.bind(actor));
 }
 
@@ -59,14 +58,31 @@ export function addGiveCurrencyPF1E(html, actor) {
   });
 }
 
-function giveItem(currentItemId) {
-  const currentActor = this;
+export function addGiveCurrencyWFRP4E(html, actor) {
+  $(`
+    <a class="currency-control combat-icon currency-give" title="Give currency">
+      <i class="fas fa-hands-helping"></i>
+    </a>
+  `).insertAfter(html.find("#currency-header .dollar-icon.combat-icon"));
+  html.find(".currency-control.combat-icon.currency-give").on("click", (e) => {
+    e.preventDefault();
+    giveCurrencyWFRP4E.bind(actor)();
+  });
+}
+
+function fetchPCList() {
   const filteredPCList = [];
   game.users.players.forEach(player => {
     if (!!player.character && game.user.character?.id !== player.character.id) {
       filteredPCList.push(player.character);
     }
   });
+  return filteredPCList;
+}
+
+function giveItem(currentItemId) {
+  const currentActor = this;
+  const filteredPCList = fetchPCList();
   const d = new PlayerDialog(({playerId, quantity}) => {
     const actor = game.actors.get(playerId);
     const currentItem = currentActor.items.find(item => item.id === currentItemId);
@@ -94,12 +110,7 @@ function giveItem(currentItemId) {
 
 function giveCurrency() {
   const currentActor = this;
-  const filteredPCList = [];
-  game.users.players.forEach(player => {
-    if (!!player.character && game.user.character?.id !== player.character.id) {
-      filteredPCList.push(player.character);
-    }
-  });
+  const filteredPCList = fetchPCList();
   const d = new PlayerDialog(({playerId, pp, gp, ep, sp, cp}) => {
     const actor = game.actors.get(playerId);
     const currentCurrency = currentActor.data.data.currency;
@@ -122,12 +133,7 @@ function giveCurrency() {
 
 function giveMainCurrencyPF1E() {
   const currentActor = this;
-  const filteredPCList = [];
-  game.users.players.forEach(player => {
-    if (!!player.character && game.user.character?.id !== player.character.id) {
-      filteredPCList.push(player.character);
-    }
-  });
+  const filteredPCList = fetchPCList();
   const d = new PlayerDialog(({playerId, pp, gp, sp, cp}) => {
     const actor = game.actors.get(playerId);
     const currentCurrency = currentActor.data.data.currency;
@@ -150,12 +156,7 @@ function giveMainCurrencyPF1E() {
 
 function giveAltCurrencyPF1E() {
   const currentActor = this;
-  const filteredPCList = [];
-  game.users.players.forEach(player => {
-    if (!!player.character && game.user.character?.id !== player.character.id) {
-      filteredPCList.push(player.character);
-    }
-  });
+  const filteredPCList = fetchPCList();
   const d = new PlayerDialog(({playerId, pp, gp, sp, cp}) => {
     const actor = game.actors.get(playerId);
     const currentCurrency = currentActor.data.data.altCurrency;
@@ -164,6 +165,32 @@ function giveAltCurrencyPF1E() {
     } else {
       game.socket.emit('module.give-item', {
         data: {quantity: {pp, gp, sp, cp}, alt: true},
+        actorId: actor.id,
+        currentActorId: currentActor.id,
+        type: "request"
+      });
+    }
+  },
+    {acceptLabel: "Offer Currency", filteredPCList, currency: true}
+  );
+  d.render(true);
+}
+
+
+function giveCurrencyWFRP4E() {
+  const currentActor = this;
+  const filteredPCList = fetchPCList();
+  const d = new PlayerDialog(({playerId, gc, ss, bp}) => {
+    const actor = game.actors.get(playerId);
+    const currentCurrency = currentActor.data.items.filter(item => item.type === "money");
+    const currentGC = currentCurrency.find(currency => currency.data.name === "Gold Crown");
+    const currentSS = currentCurrency.find(currency => currency.data.name === "Silver Shilling");
+    const currentBP = currentCurrency.find(currency => currency.data.name === "Brass Penny");
+    if (gc > currentGC.quantity.value || ss > currentSS.quantity.value || bp > currentBP.quantity.value) {
+      return ui.notifications.error(`You cannot offer more currency than you have`);
+    } else {
+      game.socket.emit('module.give-item', {
+        data: {quantity: {gc, ss, bp}},
         actorId: actor.id,
         currentActorId: currentActor.id,
         type: "request"

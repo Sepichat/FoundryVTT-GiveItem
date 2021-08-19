@@ -1,4 +1,4 @@
-import { addGiveItemButton, addGiveItemButtonTidy, addGiveCurrency, addGiveCurrencyPF1E } from './actorOverride.js';
+import { addGiveItemButton, addGiveItemButtonTidy, addGiveCurrency, addGiveCurrencyPF1E, addGiveCurrencyWFRP4E } from './actorOverride.js';
 import { completeTrade, denyTrade, receiveTrade } from './trading.js';
 
 Hooks.on('renderActorSheet5eCharacter', (sheet, html, character) => {
@@ -19,6 +19,11 @@ Hooks.on('renderActorSheetPF2e', (sheet, html, character) => {
 Hooks.on('renderActorSheetPFCharacter', (sheet, html, character) => {
   addGiveItemButton(html, sheet.actor);
   addGiveCurrencyPF1E(html, sheet.actor);
+});
+
+Hooks.on('renderActorSheetWfrp4eCharacter', (sheet, html, character) => {
+  addGiveItemButton(html, sheet.actor);
+  addGiveCurrencyWFRP4E(html, sheet.actor);
 });
 
 Hooks.on('init', function () {
