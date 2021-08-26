@@ -2,21 +2,21 @@ import { PlayerDialog } from "./dialog.js";
 
 export function addGiveItemButton(html, actor) {
   $(`
-    <a class="item-control item-give" title="Give item">
+    <a class="item-control item-give-module" title="Give item">
       <i class="fas fa-hands-helping"></i>
     </a>
   `).insertAfter(html.find(".inventory ol:not(.currency-list)  .item-control.item-edit"));
-  html.find(".item-control.item-give").on("click", giveItemHandler.bind(actor));
+  html.find(".item-control.item-give-module").on("click", giveItemHandler.bind(actor));
 }
 
 export function addGiveItemButtonTidy(html, actor) {
   $(`
-    <a class="item-control item-give" title="Give item">
+    <a class="item-control item-give-module" title="Give item">
       <i class="fas fa-hands-helping"></i>
       <span class="control-label">Give Item</span>
     </a>
   `).insertAfter(html.find(".inventory .item-control.item-edit"));
-  html.find(".item-control.item-give").on("click", giveItemHandler.bind(actor));
+  html.find(".item-control.item-give-module").on("click", giveItemHandler.bind(actor));
 }
 
 function giveItemHandler(e) {
