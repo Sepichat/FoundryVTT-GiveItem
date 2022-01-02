@@ -216,7 +216,7 @@ function sendMessageToGM(tradeData) {
         user: game.userId,
         speaker: ChatMessage.getSpeaker(),
         content: `${tradeData.currentActor.name} has sent ${tradeData.actor.name} ${offer(tradeData)}`,
-        whisper: game.users.entities.filter(u => u.isGM).map(u => u._id)
+        whisper: game.users.filter(u => u.isGM).map(u => u._id)
     };
 
     chatMessage.whisper.push(tradeData.currentActor.id);
