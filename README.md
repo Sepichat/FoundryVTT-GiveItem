@@ -2,7 +2,7 @@
 A module to allow a Player to give an item he owns to another player without the hassle to have to go through the compendium
 
 ## Information
-Please note that I'm workin gon this project on my free time, so it might take some time for me to fix some bugs or add new features.
+Please note that I'm working on this project on my free time, so it might take some time for me to fix some bugs or add new features.
 I'm doing my best with the time I have :)
 
 ### Support
