@@ -16,7 +16,9 @@ export function receiveTrade(tradeData) {
         },
         default: "two",
     });
-    d.render(true);
+    if (game.user.isGM === false) {
+        d.render(true);
+    }
 }
 
 export function completeTrade(tradeData) {
@@ -35,20 +37,20 @@ export function denyTrade(tradeData) {
 function giveItem({currentItem, quantity, actor}) {
     currentItem = actor.items.get(currentItem._id);
     let updatedQuantity, updateItem;
-    if (isNaN(currentItem.data.data.quantity)) {
-        updatedQuantity = currentItem.data.data.quantity.value - quantity;
+    if (isNaN(currentItem.system.quantity)) {
+        updatedQuantity = currentItem.system.quantity.value - quantity;
         updateItem = {
-            "data.quantity.value": updatedQuantity
+            "system.quantity.value": updatedQuantity
         }
     } else {
-        updatedQuantity = currentItem.data.data.quantity - quantity;
+        updatedQuantity = currentItem.system.quantity - quantity;
         updateItem = {
-            "data.quantity": updatedQuantity
+            "system.quantity": updatedQuantity
         }
     }
     currentItem.update(updateItem).then(res => {
-        if ((isNaN(currentItem.data.data.quantity) && currentItem.data.data.quantity.value === 0) ||
-            currentItem.data.data.quantity === 0) {
+        if ((isNaN(currentItem.system.quantity) && currentItem.system.quantity.value === 0) ||
+            currentItem.system.quantity === 0) {
             currentItem.delete();
         }
     });
@@ -56,27 +58,27 @@ function giveItem({currentItem, quantity, actor}) {
 
 function giveCurrency({quantity, actor, alt}) {
     if (game.system.id === "wfrp4e") {
-        const currentCurrency = actor.data.items.filter(item => item.type === "money");
-        const currentGC = currentCurrency.find(currency => currency.data.name === "Gold Crown");
-        const currentSS = currentCurrency.find(currency => currency.data.name === "Silver Shilling");
-        const currentBP = currentCurrency.find(currency => currency.data.name === "Brass Penny");
+        const currentCurrency = actor.items.filter(item => item.type === "money");
+        const currentGC = currentCurrency.find(currency => currency.name === "Gold Crown");
+        const currentSS = currentCurrency.find(currency => currency.name === "Silver Shilling");
+        const currentBP = currentCurrency.find(currency => currency.name === "Brass Penny");
         const updateGC = {
-            "data.quantity.value": currentGC.data.data.quantity.value - quantity.gc
+            "data.quantity.value": currentGC.system.quantity.value - quantity.gc
         };
         currentGC.update(updateGC);
         const updateSS = {
-            "data.quantity.value": currentSS.data.data.quantity.value - quantity.ss
+            "data.quantity.value": currentSS.system.quantity.value - quantity.ss
         };
         currentSS.update(updateSS);
         const updateBP = {
-            "data.quantity.value": currentBP.data.data.quantity.value - quantity.bp
+            "data.quantity.value": currentBP.system.quantity.value - quantity.bp
         };
         currentBP.update(updateBP);
     } else {
-        let currentCurrency = actor.data.data.currency;
+        let currentCurrency = actor.system.currency;
         let updateTargetGold = {};
         if (alt) {
-            currentCurrency = actor.data.data.altCurrency;
+            currentCurrency = actor.system.altCurrency;
             updateTargetGold = {
                 "data.altCurrency.pp": currentCurrency.pp - quantity.pp,
                 "data.altCurrency.gp": currentCurrency.gp - quantity.gp,
@@ -105,23 +107,23 @@ function giveCurrency({quantity, actor, alt}) {
 
 function receiveItem({currentItem, quantity, actor}) {
     const duplicatedItem = duplicate(currentItem);
-    if (isNaN(duplicatedItem.data.quantity)) {
-        duplicatedItem.data.quantity.value = quantity;
+    if (isNaN(duplicatedItem.system.quantity)) {
+        duplicatedItem.system.quantity.value = quantity;
     } else {
-        duplicatedItem.data.quantity = quantity;
+        duplicatedItem.system.quantity = quantity;
     }
     const existingItem = getItemFromInvoByName(actor, duplicatedItem.name);
     if (existingItem) {
         let updatedQuantity, updateItem;
-        if (isNaN(duplicatedItem.data.quantity)) {
-            updatedQuantity = existingItem.data.data.quantity.value + quantity;
+        if (isNaN(duplicatedItem.system.quantity)) {
+            updatedQuantity = existingItem.system.quantity.value + quantity;
             updateItem = {
-                "data.quantity.value": updatedQuantity
+                "system.quantity.value": updatedQuantity
             };
         } else {
-            updatedQuantity = existingItem.data.data.quantity + quantity;
+            updatedQuantity = existingItem.system.quantity + quantity;
             updateItem = {
-                "data.quantity": updatedQuantity
+                "system.quantity": updatedQuantity
             };
         }
         existingItem.update(updateItem);
@@ -133,28 +135,28 @@ function receiveItem({currentItem, quantity, actor}) {
 
 function receiveCurrency({actor, quantity, alt}) {
     if (game.system.id === "wfrp4e") {
-        const currentCurrency = actor.data.items.filter(item => item.type === "money");
-        const currentGC = currentCurrency.find(currency => currency.data.name === "Gold Crown");
-        const currentSS = currentCurrency.find(currency => currency.data.name === "Silver Shilling");
-        const currentBP = currentCurrency.find(currency => currency.data.name === "Brass Penny");
+        const currentCurrency = actor.items.filter(item => item.type === "money");
+        const currentGC = currentCurrency.find(currency => currency.name === "Gold Crown");
+        const currentSS = currentCurrency.find(currency => currency.name === "Silver Shilling");
+        const currentBP = currentCurrency.find(currency => currency.name === "Brass Penny");
         const updateGC = {
-            "data.quantity.value": currentGC.data.data.quantity.value + quantity.gc
+            "data.quantity.value": currentGC.system.quantity.value + quantity.gc
         };
         currentGC.update(updateGC);
         const updateSS = {
-            "data.quantity.value": currentSS.data.data.quantity.value + quantity.ss
+            "data.quantity.value": currentSS.system.quantity.value + quantity.ss
         };
         currentSS.update(updateSS);
         const updateBP = {
-            "data.quantity.value": currentBP.data.data.quantity.value + quantity.bp
+            "data.quantity.value": currentBP.system.quantity.value + quantity.bp
         };
         currentBP.update(updateBP);
         console.log(`Giving currency: GC:${quantity.gc}, SS:${quantity.ss}, BP:${quantity.bp}, to actor ${actor.id}`);
     } else {
-        let currentCurrency = actor.data.data.currency;
+        let currentCurrency = actor.system.currency;
         let updateGold = {};
         if (alt) {
-            currentCurrency = actor.data.data.altCurrency;
+            currentCurrency = actor.system.altCurrency;
             updateGold = {
                 "data.altCurrency.pp": currentCurrency.pp + quantity.pp,
                 "data.altCurrency.gp": currentCurrency.gp + quantity.gp,
@@ -225,5 +227,5 @@ function sendMessageToGM(tradeData) {
 }
 
 function getItemFromInvoByName(actor, name) {
-  return actor.items.find(t => t.data.name === name);
+  return actor.items.find(t => t.name === name);
 }

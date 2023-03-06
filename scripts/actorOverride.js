@@ -87,10 +87,10 @@ function giveItem(currentItemId) {
     const actor = game.actors.get(playerId);
     const currentItem = currentActor.items.find(item => item.id === currentItemId);
     let currentItemQuantity;
-    if (isNaN(currentItem.data.data.quantity)) {
-      currentItemQuantity = currentItem.data.data.quantity.value
+    if (isNaN(currentItem.system.quantity)) {
+      currentItemQuantity = currentItem.system.quantity.value
     } else {
-      currentItemQuantity = currentItem.data.data.quantity
+      currentItemQuantity = currentItem.system.quantity
     }
     if (quantity > currentItemQuantity) {
       return ui.notifications.error(`You cannot offer more items than you have`);
@@ -113,7 +113,7 @@ function giveCurrency() {
   const filteredPCList = fetchPCList();
   const d = new PlayerDialog(({playerId, pp, gp, ep, sp, cp}) => {
     const actor = game.actors.get(playerId);
-    const currentCurrency = currentActor.data.data.currency;
+    const currentCurrency = currentActor.system.currency;
     if (pp > currentCurrency.pp || gp > currentCurrency.gp || ep > currentCurrency.ep || sp > currentCurrency.sp || cp > currentCurrency.cp) {
       return ui.notifications.error(`You cannot offer more currency than you have`);
     } else {
@@ -136,7 +136,7 @@ function giveMainCurrencyPF1E() {
   const filteredPCList = fetchPCList();
   const d = new PlayerDialog(({playerId, pp, gp, sp, cp}) => {
     const actor = game.actors.get(playerId);
-    const currentCurrency = currentActor.data.data.currency;
+    const currentCurrency = currentActor.system.currency;
     if (pp > currentCurrency.pp || gp > currentCurrency.gp || sp > currentCurrency.sp || cp > currentCurrency.cp) {
       return ui.notifications.error(`You cannot offer more currency than you have`);
     } else {
@@ -159,7 +159,7 @@ function giveAltCurrencyPF1E() {
   const filteredPCList = fetchPCList();
   const d = new PlayerDialog(({playerId, pp, gp, sp, cp}) => {
     const actor = game.actors.get(playerId);
-    const currentCurrency = currentActor.data.data.altCurrency;
+    const currentCurrency = currentActor.system.altCurrency;
     if (pp > currentCurrency.pp || gp > currentCurrency.gp || sp > currentCurrency.sp || cp > currentCurrency.cp) {
       return ui.notifications.error(`You cannot offer more currency than you have`);
     } else {
@@ -182,10 +182,10 @@ function giveCurrencyWFRP4E() {
   const filteredPCList = fetchPCList();
   const d = new PlayerDialog(({playerId, gc, ss, bp}) => {
     const actor = game.actors.get(playerId);
-    const currentCurrency = currentActor.data.items.filter(item => item.type === "money");
-    const currentGC = currentCurrency.find(currency => currency.data.name === "Gold Crown");
-    const currentSS = currentCurrency.find(currency => currency.data.name === "Silver Shilling");
-    const currentBP = currentCurrency.find(currency => currency.data.name === "Brass Penny");
+    const currentCurrency = currentActor.items.filter(item => item.type === "money");
+    const currentGC = currentCurrency.find(currency => currency.name === "Gold Crown");
+    const currentSS = currentCurrency.find(currency => currency.name === "Silver Shilling");
+    const currentBP = currentCurrency.find(currency => currency.name === "Brass Penny");
     if (gc > currentGC.quantity.value || ss > currentSS.quantity.value || bp > currentBP.quantity.value) {
       return ui.notifications.error(`You cannot offer more currency than you have`);
     } else {
