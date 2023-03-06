@@ -8,7 +8,7 @@
   }],
   "url": "https://github.com/Sepichat/FoundryVTT-GiveItem",
   "bugs": "https://github.com/Sepichat/FoundryVTT-GiveItem/issues",
-  "version": "1.12.1",
+  "version": "1.12.2",
   "compatibility": {
     "minimum": "10.291",
     "verified": "10.291"
@@ -43,10 +43,18 @@
         "minimum": "0.82.5",
         "verified": "0.82.5"
       }
+    },
+    {
+      "id": "wfrp4e",
+      "type": "system",
+      "compatibility": {
+        "minimum": "6.3.1",
+        "verified": "6.3.1"
+      }
     }]
   },
   "license": "LICENSE",
   "socket": true,
   "manifest": "https://raw.githubusercontent.com/Sepichat/FoundryVTT-GiveItem/main/module.json",
-  "download": "https://github.com/Sepichat/FoundryVTT-GiveItem/releases/download/v1.12.1/module.zip"
+  "download": "https://github.com/Sepichat/FoundryVTT-GiveItem/releases/download/v1.12.2/module.zip"
 }
