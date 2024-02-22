@@ -5,27 +5,26 @@ export function addGiveItemButton(html, actor) {
     <a class="item-control item-give-module" title="Give item">
       <i class="fas fa-hands-helping"></i>
     </a>
-  `).insertAfter(html.find(".inventory ol:not(.currency-list)  .item-control.item-edit"));
+  `).insertAfter(html.find(".inventory ol:not(.currency-list) .item-control[data-action='equip']"));
   html.find(".item-control.item-give-module").on("click", giveItemHandler.bind(actor));
+}
+
+export function addGiveItemButton5E(html, actor) {
+  $(`
+    <a class="item-control item-give-module give-item" title="Give item">
+      <i class="fas fa-hands-helping"></i>
+    </a>
+  `).insertAfter(html.find(".inventory ol:not(.currency-list) .item-control[data-action='equip']"));
+  html.find(".item-control.item-give-module.give-item").on("click", giveItemHandler.bind(actor));
 }
 
 export function addGiveItemButtonPF2E(html, actor) {
   $(`
-    <a class="item-control item-give-module item" title="Give item">
+    <a class="item-control item-give-module give-item" title="Give item">
       <i class="fas fa-hands-helping"></i>
     </a>
   `).insertAfter(html.find(".inventory .items .item-controls .item-carry-type"));
-  html.find(".item-control.item-give-module.item").on("click", giveItemHandlerPF2E.bind(actor));
-}
-
-export function addGiveItemButtonTidy(html, actor) {
-  $(`
-    <a class="item-control item-give-module" title="Give item">
-      <i class="fas fa-hands-helping"></i>
-      <span class="control-label">Give Item</span>
-    </a>
-  `).insertAfter(html.find(".inventory .item-control.item-edit"));
-  html.find(".item-control.item-give-module").on("click", giveItemHandler.bind(actor));
+  html.find(".item-control.item-give-module.give-item").on("click", giveItemHandlerPF2E.bind(actor));
 }
 
 function giveItemHandler(e) {
@@ -52,6 +51,24 @@ export function addGiveCurrency(html, actor) {
   });
 }
 
+export function addGiveCurrency5E(html, actor) {
+  $(`
+    <a class="item-control item-give-module give-currency" title="Give item">
+      <i class="fas fa-hands-helping"></i>
+    </a>
+  `).insertAfter(html.find(".inventory .currency .item-action"));
+  html.find(".item-control.item-give-module.give-currency").on("click", giveCurrency5E.bind(actor));
+}
+
+export function addGiveCurrency5E2(html, actor) {
+  $(`
+    <button type="button" title="Give item" class="item-action unbutton item-give-module give-currency" data-action="give-currency" aria-label="Give Currency">
+      <i class="fas fa-hands-helping"></i>
+    </button>
+  `).insertAfter(html.find(".inventory .currency .item-action"));
+  html.find(".item-action.unbutton.item-give-module.give-currency").on("click", giveCurrency5E.bind(actor));
+}
+
 export function addGiveCurrencyPF1E(html, actor) {
   $(`
     <a class="currency-control currency-give main" title="Give currency">
@@ -76,12 +93,12 @@ export function addGiveCurrencyPF1E(html, actor) {
 export function addGiveCurrencyPF2E(html, actor) {
   $(`
     <li>
-      <button class="item-control item-give-module currency" title="Give item">
+      <button class="item-control item-give-module give-currency" title="Give item">
         <i class="fas fa-hands-helping"></i>
       </button>
     </li>
   `).insertAfter(html.find(".denomination.cp"));
-  html.find(".item-control.item-give-module.currency").on("click", giveMainCurrencyPF2E.bind(actor));
+  html.find(".item-control.item-give-module.give-currency").on("click", giveMainCurrencyPF2E.bind(actor));
 }
 
 export function addGiveCurrencyWFRP4E(html, actor) {
@@ -134,7 +151,7 @@ function giveItem(currentItemId) {
   d.render(true);
 }
 
-function giveCurrency() {
+function giveCurrency5E() {
   const currentActor = this;
   const filteredPCList = fetchPCList();
   const d = new PlayerDialog(({playerId, pp, gp, ep, sp, cp}) => {
