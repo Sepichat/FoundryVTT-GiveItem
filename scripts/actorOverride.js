@@ -9,6 +9,15 @@ export function addGiveItemButton(html, actor) {
   html.find(".item-control.item-give-module").on("click", giveItemHandler.bind(actor));
 }
 
+export function addGiveItemButtonPF2E(html, actor) {
+  $(`
+    <a class="item-control item-give-module item" title="Give item">
+      <i class="fas fa-hands-helping"></i>
+    </a>
+  `).insertAfter(html.find(".inventory .items .item-controls .item-carry-type"));
+  html.find(".item-control.item-give-module.item").on("click", giveItemHandlerPF2E.bind(actor));
+}
+
 export function addGiveItemButtonTidy(html, actor) {
   $(`
     <a class="item-control item-give-module" title="Give item">
@@ -22,6 +31,12 @@ export function addGiveItemButtonTidy(html, actor) {
 function giveItemHandler(e) {
   e.preventDefault();
   const currentItemId = e.currentTarget.closest(".item").dataset.itemId;
+  giveItem.bind(this)(currentItemId);
+}
+
+function giveItemHandlerPF2E(e) {
+  e.preventDefault();
+  const currentItemId = e.currentTarget.closest(".data").parentNode.dataset.itemId;
   giveItem.bind(this)(currentItemId);
 }
 
@@ -56,6 +71,17 @@ export function addGiveCurrencyPF1E(html, actor) {
     e.preventDefault();
     giveAltCurrencyPF1E.bind(actor)();
   });
+}
+
+export function addGiveCurrencyPF2E(html, actor) {
+  $(`
+    <li>
+      <button class="item-control item-give-module currency" title="Give item">
+        <i class="fas fa-hands-helping"></i>
+      </button>
+    </li>
+  `).insertAfter(html.find(".denomination.cp"));
+  html.find(".item-control.item-give-module.currency").on("click", giveMainCurrencyPF2E.bind(actor));
 }
 
 export function addGiveCurrencyWFRP4E(html, actor) {
@@ -130,13 +156,34 @@ function giveCurrency() {
   d.render(true);
 }
 
-
 function giveMainCurrencyPF1E() {
   const currentActor = this;
   const filteredPCList = fetchPCList();
   const d = new PlayerDialog(({playerId, pp, gp, sp, cp}) => {
     const actor = game.actors.get(playerId);
     const currentCurrency = currentActor.system.currency;
+    if (pp > currentCurrency.pp || gp > currentCurrency.gp || sp > currentCurrency.sp || cp > currentCurrency.cp) {
+      return ui.notifications.error(`You cannot offer more currency than you have`);
+    } else {
+      game.socket.emit('module.give-item', {
+        data: {quantity: {pp, gp, sp, cp}},
+        actorId: actor.id,
+        currentActorId: currentActor.id,
+        type: "request"
+      });
+    }
+  },
+    {acceptLabel: "Offer Currency", filteredPCList, currency: true}
+  );
+  d.render(true);
+}
+
+function giveMainCurrencyPF2E() {
+  const currentActor = this;
+  const filteredPCList = fetchPCList();
+  const d = new PlayerDialog(({playerId, pp, gp, sp, cp}) => {
+    const actor = game.actors.get(playerId);
+    const currentCurrency = currentActor.inventory.coins;
     if (pp > currentCurrency.pp || gp > currentCurrency.gp || sp > currentCurrency.sp || cp > currentCurrency.cp) {
       return ui.notifications.error(`You cannot offer more currency than you have`);
     } else {
