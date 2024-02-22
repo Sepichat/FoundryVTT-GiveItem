@@ -74,6 +74,8 @@ function giveCurrency({quantity, actor, alt}) {
             "data.quantity.value": currentBP.system.quantity.value - quantity.bp
         };
         currentBP.update(updateBP);
+    } else if (game.system.id === "pf2e") {
+        actor.inventory.removeCoins(quantity);
     } else {
         let currentCurrency = actor.system.currency;
         let updateTargetGold = {};
@@ -152,6 +154,9 @@ function receiveCurrency({actor, quantity, alt}) {
         };
         currentBP.update(updateBP);
         console.log(`Giving currency: GC:${quantity.gc}, SS:${quantity.ss}, BP:${quantity.bp}, to actor ${actor.id}`);
+    } else if (game.system.id === "pf2e") {
+        console.log(`Giving currency: pp:${quantity.pp}, gp:${quantity.gp}, sp:${quantity.sp}, cp:${quantity.cp}, to actor ${actor.id}`);
+        actor.inventory.addCoins(quantity);
     } else {
         let currentCurrency = actor.system.currency;
         let updateGold = {};
