@@ -8,7 +8,7 @@
   }],
   "url": "https://github.com/Sepichat/FoundryVTT-GiveItem",
   "bugs": "https://github.com/Sepichat/FoundryVTT-GiveItem/issues",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "compatibility": {
     "minimum": "11.300",
     "verified": "11.315"
@@ -22,6 +22,14 @@
   "relationships": {
     "systems": [
       {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "3.0.3",
+          "verified": "3.0.3"
+        }
+      },
+      {
         "id": "pf2e",
         "type": "system",
         "compatibility": {
@@ -34,5 +42,5 @@
   "license": "LICENSE",
   "socket": true,
   "manifest": "https://raw.githubusercontent.com/Sepichat/FoundryVTT-GiveItem/main/module.json",
-  "download": "https://github.com/Sepichat/FoundryVTT-GiveItem/releases/download/v2.0.0/module.zip"
+  "download": "https://github.com/Sepichat/FoundryVTT-GiveItem/releases/download/v2.1.0/module.zip"
 }
