@@ -93,7 +93,7 @@ export function addGiveCurrencyPF1E(html, actor) {
 export function addGiveCurrencyPF2E(html, actor) {
   $(`
     <li>
-      <button class="item-control item-give-module give-currency" title="Give item">
+      <button type="button" class="item-control item-give-module give-currency" title="Give item">
         <i class="fas fa-hands-helping"></i>
       </button>
     </li>
