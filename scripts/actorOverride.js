@@ -18,6 +18,15 @@ export function addGiveItemButton5E(html, actor) {
   html.find(".item-control.item-give-module.give-item").on("click", giveItemHandler.bind(actor));
 }
 
+export function addGiveItemButtonTidy5E(html, actor) {
+  $(`
+    <button type="button" class="item-list-button give-item" title="Give item" tabindex="-1">
+      <i class="fas fa-hands-helping"></i>
+    </button>
+  `).insertAfter(html.find(".inventory .item-table-cell .tidy5e-classic-controls .item-list-button:first"));
+  html.find(".item-table-cell .tidy5e-classic-controls .give-item").on("click", giveItemTidyHandler.bind(actor));
+}
+
 export function addGiveItemButtonPF2E(html, actor) {
   $(`
     <a class="item-control item-give-module give-item" title="Give item">
@@ -30,6 +39,12 @@ export function addGiveItemButtonPF2E(html, actor) {
 function giveItemHandler(e) {
   e.preventDefault();
   const currentItemId = e.currentTarget.closest(".item").dataset.itemId;
+  giveItem.bind(this)(currentItemId);
+}
+
+function giveItemTidyHandler(e) {
+  e.preventDefault();
+  const currentItemId = e.currentTarget.closest(".item-table-row-container").dataset.itemId;
   giveItem.bind(this)(currentItemId);
 }
 
